@@ -37,6 +37,8 @@ enum URLRouter {
             if let v = Double(q["value"] ?? "") { haptics.strength = min(1, max(0, v)) }
         case "stop":
             haptics.stop()
+        case "open":
+            break                      // just brings the app to the front (used by the website's "Open app")
         default:
             break
         }

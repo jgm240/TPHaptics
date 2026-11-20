@@ -1,0 +1,38 @@
+{
+  "name": "IPHaptics",
+  "identifier": "io.github.jgm240.iphaptics.source",
+  "subtitle": "Haptic patterns for iPhone",
+  "description": "IPHaptics plays haptic patterns on your iPhone: paint your own vibrations, feel Morse, breathe with it, or let sound drive it.",
+  "iconURL": "https://jgm240.github.io/TPHaptics/icon.png",
+  "website": "https://jgm240.github.io/TPHaptics/",
+  "tintColor": "#EE4895",
+  "apps": [
+    {
+      "name": "IPHaptics",
+      "bundleIdentifier": "io.github.jgm240.IPHaptics",
+      "developerName": "jgm240",
+      "subtitle": "Feel your phone.",
+      "localizedDescription": "Haptic patterns for iPhone, built on Core Haptics.\n\n• Paint: draw a line, with time across and strength up, and feel it as one smooth vibration\n• Eleven built-in patterns, a sequencer, and your own saved paintings\n• Buzz and a continuous hum you can reshape live; a feel pad\n• Breathing guide, Morse, and three games\n• Audio to haptics: bass, mids, highs or loudness from the microphone\n\nNeeds an iPhone 8 or later. iOS only lets apps vibrate while they are open on screen. Open source (MIT).",
+      "iconURL": "https://jgm240.github.io/TPHaptics/icon.png",
+      "tintColor": "#EE4895",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "1.0",
+          "date": "2026-11-20",
+          "localizedDescription": "First release.",
+          "downloadURL": "https://github.com/jgm240/TPHaptics/releases/download/iphaptics-v1.0/IPHaptics-unsigned.ipa",
+          "size": 2462137,
+          "minOSVersion": "16.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSMicrophoneUsageDescription": "IPHaptics listens to the sound around you so it can vibrate to it. Audio is analysed live and never recorded or stored."
+        }
+      }
+    }
+  ],
+  "news": []
+}
