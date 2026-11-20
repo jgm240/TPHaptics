@@ -7,6 +7,10 @@ struct FeelPadView: View {
     @ObservedObject private var haptics = Haptics.shared
     @State private var touch: CGPoint?        // normalized, y up
 
+    init() {
+        if UserDefaults.standard.bool(forKey: "marketing") { _touch = State(initialValue: CGPoint(x: 0.68, y: 0.62)) }
+    }
+
     var body: some View {
         VStack(spacing: 14) {
             Hint("Put a finger on the pad and slide. Up is stronger, right is crisper, and the vibration follows you.")
@@ -154,6 +158,7 @@ struct BreathingView: View {
     ]
 
     private func phase(at date: Date, playing: Bool) -> (String, Double) {
+        if UserDefaults.standard.bool(forKey: "marketing") { return ("Breathe in", 0.82) }   // website screenshots
         guard playing else { return ("Ready", 0.3) }
         let t = date.timeIntervalSince(started)
         guard t < plan.totalLength else { return ("Done", 0.3) }

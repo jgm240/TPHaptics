@@ -44,13 +44,16 @@ jobs:
         run: |
           APP=build/Build/Products/Debug-iphonesimulator/IPHaptics.app
           xcrun simctl install "$UDID" "$APP"
+          # A clean, App-Store-style status bar (9:41, full battery and signal).
+          xcrun simctl status_bar "$UDID" override --time "9:41" --batteryState charged --batteryLevel 100 \
+            --cellularMode active --cellularBars 4 --wifiBars 3
           mkdir -p shots
           for s in home patterns sequencer paint buzz pad breathe morse audio simon hotcold rhythm; do
             xcrun simctl terminate "$UDID" io.github.jgm240.IPHaptics 2>/dev/null || true
             if [ "$s" = home ]; then
-              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics
+              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics -marketing YES
             else
-              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics -startScreen "$s"
+              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics -marketing YES -startScreen "$s"
             fi
             sleep 4
             xcrun simctl io "$UDID" screenshot "shots/$s.png"

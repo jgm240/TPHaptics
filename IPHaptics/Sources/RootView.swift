@@ -93,11 +93,12 @@ struct RootView: View {
     }
 
     var body: some View {
+        // The bar is attached to each screen (not to the stack) so non-scrolling screens lay out above it.
         NavigationStack(path: $path) {
             HomeView()
+                .safeAreaInset(edge: .bottom, spacing: 0) { ControlBar() }
                 .navigationDestination(for: AppScreen.self) { ScreenView(screen: $0) }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) { ControlBar() }
     }
 }
 
@@ -119,6 +120,7 @@ struct ScreenView: View {
             case .rhythm: RhythmEchoView()
             }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) { ControlBar() }
         .navigationTitle(screen.title)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -126,10 +128,12 @@ struct ScreenView: View {
 
 struct HomeView: View {
     @ObservedObject private var haptics = Haptics.shared
+    /// `-marketing YES` (launch argument) is used for the website screenshots.
+    private let marketing = UserDefaults.standard.bool(forKey: "marketing")
 
     var body: some View {
         List {
-            if !haptics.supported {
+            if !haptics.supported && !marketing {
                 Section {
                     Label("This device doesn't report a Taptic Engine (an iPad or the Simulator?). You can look around, but nothing will vibrate.",
                           systemImage: "exclamationmark.triangle.fill")

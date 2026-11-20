@@ -86,6 +86,11 @@ struct PaintView: View {
     @State private var message: String?
     @State private var painting = false
 
+    init() {
+        // Website screenshots start with a painted swell.
+        if UserDefaults.standard.bool(forKey: "marketing") { _strokes = State(initialValue: PaintBuilder.examples[1].strokes) }
+    }
+
     private var pattern: HapticPattern {
         PaintBuilder.pattern(strokes: strokes, length: length, smooth: smooth, spacing: spacing, sharpness: Float(sharpness))
     }
@@ -219,7 +224,7 @@ struct PaintView: View {
                     haptics.hum.end()
                 })
         }
-        .frame(minHeight: 220)
+        .frame(minHeight: 160)
     }
 
     private func pt(_ p: CGPoint, _ size: CGSize) -> CGPoint { CGPoint(x: p.x * size.width, y: (1 - p.y) * size.height) }

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>IPHaptics: haptic patterns for iPhone</title>
+  <meta name="description" content="IPHaptics plays patterns on the iPhone's Taptic Engine: paint your own vibrations, Morse, breathing, audio to haptics and games. Free and open source.">
+  <meta name="theme-color" content="#8a2be2">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+    :root {
+      --bg: #fbf9fc; --fg: #1d1b22; --muted: #6a6575; --card: #ffffff; --line: rgba(30, 20, 60, .1);
+      --accent: #c13584; --grad: linear-gradient(135deg, #6a33f5 0%, #ee4895 55%, #ff9a3d 100%);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #131118; --fg: #f4f1f8; --muted: #a59fb3; --card: #1d1a24; --line: rgba(255, 255, 255, .1); --accent: #ff6fb0; }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+    header.hero { background: var(--grad); color: #fff; padding: calc(44px + env(safe-area-inset-top)) 0 54px; text-align: center; }
+    .hero img { width: 112px; height: 112px; border-radius: 26px; box-shadow: 0 14px 34px rgba(0, 0, 0, .28); }
+    .hero h1 { margin: 18px 0 6px; font-size: clamp(32px, 7vw, 46px); letter-spacing: -.02em; }
+    .hero p { margin: 0 auto; max-width: 30em; font-size: 18px; opacity: .95; }
+    h2 { font-size: 22px; margin: 38px 0 12px; letter-spacing: -.01em; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; margin: 14px 0; }
+    .card h3 { margin: 0 0 4px; font-size: 18px; }
+    .card p { margin: 6px 0 14px; color: var(--muted); }
+    .tag { display: inline-block; font-size: 12px; font-weight: 650; padding: 2px 9px; border-radius: 99px; background: rgba(193, 53, 132, .14); color: var(--accent); margin-left: 8px; vertical-align: 2px; }
+    .btn {
+      display: inline-block; text-decoration: none; font-weight: 650; color: #fff; background: var(--grad);
+      padding: 12px 20px; border-radius: 13px; margin: 4px 8px 4px 0;
+    }
+    .btn.alt { background: transparent; color: var(--fg); border: 1.5px solid var(--line); }
+    .btn:active { transform: scale(.98); }
+    ol, ul { padding-left: 1.25em; margin: 8px 0; }
+    li { margin: 4px 0; }
+    code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(120, 100, 160, .14); padding: 1px 6px; border-radius: 6px; word-break: break-all; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .features div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .features b { display: block; margin-bottom: 2px; }
+    .features span { color: var(--muted); font-size: 14.5px; }
+    .note { border-left: 4px solid #ee9b3d; padding: 10px 14px; background: rgba(238, 155, 61, .12); border-radius: 0 12px 12px 0; margin: 14px 0; }
+    #desktop { display: none; }
+    footer { color: var(--muted); font-size: 14px; text-align: center; padding: 34px 0 44px; }
+    a { color: var(--accent); }
+    details summary { cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <img src="icon.png" alt="IPHaptics app icon" width="112" height="112">
+      <h1>IPHaptics</h1>
+      <p>Haptic patterns for your iPhone: paint your own vibrations, feel Morse, breathe with it, or let sound drive it.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="desktop" class="note"><b>Open this page on your iPhone</b> to use the install buttons. They launch SideStore, AltStore or TrollStore on the phone.</div>
+
+    <h2>Install</h2>
+    <p>IPHaptics is free and open source. Apple doesn't allow one-tap installs of apps like this, so pick the installer you already use. All of them install the same file.</p>
+
+    <div class="card">
+      <h3>SideStore or AltStore <span class="tag">any iOS 16+</span></h3>
+      <p>Adds IPHaptics as a source, so you can install and update it from inside the app. These tools sign the app on your phone with your own Apple ID.</p>
+      <a class="btn" id="sidestore" href="#">Add to SideStore</a>
+      <a class="btn alt" id="altstore" href="#">Add to AltStore</a>
+      <p style="margin-bottom:0">Or add this source link by hand: <code id="srcurl"></code></p>
+    </div>
+
+    <div class="card">
+      <h3>TrollStore <span class="tag">older iOS only</span></h3>
+      <p>One tap, no signing, no 7-day expiry. TrollStore only works on certain older iOS versions (roughly up to 16.6.1, 16.7 RC and 17.0).</p>
+      <a class="btn" id="troll" href="#">Install with TrollStore</a>
+    </div>
+
+    <div class="card">
+      <h3>Download the IPA</h3>
+      <p>For any other signing tool (Sideloadly, a certificate of your own…). The file is <b>unsigned</b>.</p>
+      <a class="btn alt" id="ipa" href="#">Download IPHaptics-unsigned.ipa</a>
+    </div>
+
+    <div class="card">
+      <h3>First time with a sideloaded app?</h3>
+      <ol>
+        <li>Turn on <b>Developer Mode</b>: Settings → Privacy &amp; Security → Developer Mode, then restart.</li>
+        <li>If iOS says the developer isn't trusted: Settings → General → VPN &amp; Device Management → trust your Apple ID.</li>
+        <li>Free Apple IDs expire after 7 days; SideStore and AltStore can refresh the app for you.</li>
+      </ol>
+    </div>
+
+    <details class="card">
+      <summary>Why not "install from the website" in the EU?</summary>
+      <p>Apple's EU web installs exist, but they're reserved for developers who meet Apple's conditions: a paid developer account, a domain registered with Apple, Apple's own notarization of every app, and a minimum track record (or an approved fee waiver). An unsigned open-source hobby app can't use that route, so IPHaptics relies on tools that sign it with your own Apple ID instead.</p>
+    </details>
+
+    <h2>What it does</h2>
+    <div class="features">
+      <div><b>Paint</b><span>Draw a line: time across, strength up. Feel it as one smooth vibration.</span></div>
+      <div><b>Patterns</b><span>Heartbeat, swell, rumble, knock and more, plus your own.</span></div>
+      <div><b>Buzz &amp; Feel Pad</b><span>A continuous hum you reshape live by sliding a finger.</span></div>
+      <div><b>Audio</b><span>Bass, mids, highs or loudness from the microphone become vibration.</span></div>
+      <div><b>Breathing &amp; Morse</b><span>A silent breathing guide, and text you can feel.</span></div>
+      <div><b>Games</b><span>Simon, Hot &amp; Cold and Rhythm Echo, played by feel.</span></div>
+    </div>
+
+    <div class="note"><b>Good to know:</b> needs an iPhone 8 or later. iOS only allows vibration while the app is open on screen, so it can't buzz in the background or for notifications. Haptics are muted in Low Power Mode or when System Haptics is off.</div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      Made by jgm240 · <a href="https://github.com/jgm240/TPHaptics/tree/main/IPHaptics">Source on GitHub</a> · MIT licence<br>
+      Not affiliated with Apple. Not yet tested on a physical iPhone.
+    </div>
+  </footer>
+
+  <script>
+    var BASE = location.origin + location.pathname.replace(/[^/]*$/, "");
+    var SOURCE = BASE + "source.json";
+    var IPA = "https://github.com/jgm240/TPHaptics/releases/download/iphaptics-v1.0/IPHaptics-unsigned.ipa";
+    document.getElementById("sidestore").href = "sidestore://source?url=" + encodeURIComponent(SOURCE);
+    document.getElementById("altstore").href = "altstore://source?url=" + encodeURIComponent(SOURCE);
+    document.getElementById("troll").href = "apple-magnifier://install?url=" + encodeURIComponent(IPA);
+    document.getElementById("ipa").href = IPA;
+    document.getElementById("srcurl").textContent = SOURCE;
+    if (!/iPhone|iPad|iPod/.test(navigator.userAgent)) document.getElementById("desktop").style.display = "block";
+  </script>
+</body>
+</html>
