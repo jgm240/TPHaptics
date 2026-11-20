@@ -53,6 +53,13 @@ enum SelfTests {
         let follow = AudioHaptics.selfTestFollow()
         print("audio loudness follow: loud 2 s = \(follow.loud) taps, quiet 2 s = \(follow.quiet) taps (expect loud >> quiet)")
 
+        // Banner text clean-up (the shape macOS 26 actually produced in a real test)
+        let cleaned = NotificationWatcher.cleanTexts([
+            "Notification Center", "Script Editor, TPHaptics test, from the agent, Detection test body",
+            "TPHaptics test", "from the agent", "Detection test body",
+        ])
+        print("banner text: \(cleaned)  (expect app name first, no 'Notification Center')")
+
         // Pattern library round-trip
         MainActor.assumeIsolated {
             let lib = PatternLibrary.shared

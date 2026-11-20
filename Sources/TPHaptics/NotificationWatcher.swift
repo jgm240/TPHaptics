@@ -156,7 +156,22 @@ final class NotificationWatcher {
             }
         }
         walk(root, 0)
-        return out
+        return Self.cleanTexts(out)
+    }
+
+    /// macOS 26 banners expose a generic window title ("Notification Center") plus one combined
+    /// description ("App, title, subtitle, body") next to the individual pieces. Drop the title and
+    /// the combined string, and put the app name (its first part) in front.
+    static func cleanTexts(_ raw: [String]) -> [String] {
+        var t = raw.filter { $0 != "Notification Center" }
+        if t.count > 2,
+           let combined = t.first(where: { c in t.filter { $0 != c }.allSatisfy { c.contains($0) } }) {
+            t.removeAll { $0 == combined }
+            if let app = combined.components(separatedBy: ", ").first, !app.isEmpty, !t.contains(app) {
+                t.insert(app, at: 0)
+            }
+        }
+        return t
     }
 
     /// "AXWindow/AXNotificationCenterBanner <- AXApplication/-" style trace for the log.
