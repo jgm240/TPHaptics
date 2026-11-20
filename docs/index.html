@@ -328,7 +328,7 @@
           <div class="tile feat reveal"><b>Feel</b><ul>
             <li><b>Feel Pad</b>: slide to shape a buzz, up for stronger and right for faster</li><li>A tap for every key, word or sentence</li><li>Scroll notches, pinch, rotate and swipe steps</li><li>Click feedback when you tap-to-click</li><li>Feel grid lines, window and screen edges, even buttons under the pointer</li></ul></div>
           <div class="tile feat reveal"><b>Fun and tools</b><ul>
-            <li>Morse, a breathing guide, three games</li><li><code>tphaptics://</code> links and a shell command, so scripts can buzz you</li><li>Silent Clicking and Force Click switches</li></ul></div>
+            <li>Morse, a breathing guide, three games</li><li>Shortcuts actions, <code>tphaptics://</code> links and a shell command, so scripts can buzz you</li><li>Silent Clicking and Force Click switches</li></ul></div>
         </div>
       </section>
 
@@ -473,6 +473,7 @@
           <div class="tile"><b>Games</b><span>Simon, Hot &amp; Cold and Rhythm Echo, all played by feel.</span></div>
           <div class="tile"><b>Sequencer</b><span>A 16-step grid of taps with tempo and strength.</span></div>
           <div class="tile"><b>Strength control</b><span>One slider scales everything, always within reach.</span></div>
+          <div class="tile"><b>Shortcuts &amp; Siri</b><span>Ten actions, from Play Pattern to a Feel Pad you build yourself, plus “Play Heartbeat in IPHaptics”.</span></div>
         </div>
       </section>
 
@@ -550,7 +551,7 @@
     (function () {
       var BASE = location.origin + location.pathname.replace(/[^/]*$/, "");
       var SOURCE = BASE + "source.json";
-      var IPA = "https://github.com/jgm240/TPHaptics/releases/download/iphaptics-v1.0/IPHaptics-unsigned.ipa";
+      var IPA = "https://github.com/jgm240/TPHaptics/releases/download/iphaptics-v1.1/IPHaptics-unsigned.ipa";
       var ua = navigator.userAgent;
       var isPhone = /iPhone|iPod/.test(ua);
       var isMac = /Macintosh/.test(ua) && !(navigator.maxTouchPoints > 1);   // iPads report "Macintosh" but have touch
