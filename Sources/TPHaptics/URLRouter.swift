@@ -69,6 +69,7 @@ enum URLRouter {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Diag.log("launch: \(RunInfo.summary) accessibilityTrusted=\(AXIsProcessTrusted())")
         Task { @MainActor in
             Automations.shared.start()
             InputFeel.shared.start()

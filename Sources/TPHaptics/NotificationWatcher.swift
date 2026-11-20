@@ -129,7 +129,9 @@ final class NotificationWatcher {
         var el: AXUIElement? = element
         for _ in 0..<5 {
             guard let cur = el else { return nil }
-            if let s = copyString(cur, kAXSubroleAttribute), s.hasPrefix("AXNotificationCenter") { return (s, cur) }
+            // Older macOS labelled banners "AXNotificationCenterBanner"; macOS 26 reports "AXSystemDialog".
+            if let s = copyString(cur, kAXSubroleAttribute),
+               s.hasPrefix("AXNotificationCenter") || s == "AXSystemDialog" { return (s, cur) }
             el = copyParent(cur)
         }
         return nil

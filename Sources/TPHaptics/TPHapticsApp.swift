@@ -84,6 +84,10 @@ struct TPHapticsApp: App {
                     print("continuous: \(c1 - before) actuations; after stop +\(a.actuationCount - c1), isPlaying=\(model.player.isPlaying)")
                 }
             }
+            // `--render-icon <dir>` writes the app icon as an .iconset folder.
+            if let i = args.firstIndex(of: "--render-icon"), i + 1 < args.count {
+                MainActor.assumeIsolated { AppIconRenderer.writeIconset(to: args[i + 1]) }
+            }
             // `--snapshot-dir <path>` renders every screen to PNG files.
             if let i = args.firstIndex(of: "--snapshot-dir"), i + 1 < args.count {
                 SelfTests.snapshots(into: args[i + 1])

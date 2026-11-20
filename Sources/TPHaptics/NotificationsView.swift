@@ -35,6 +35,15 @@ struct NotificationsView: View {
                         Text(model.accessibilityTrusted ? "Accessibility access granted" : "Accessibility access needed")
                             .font(.headline)
                         Hint("macOS has no public way to see other apps' notifications, so TPHaptics watches Notification Center's banners through the Accessibility API.")
+                        if !RunInfo.isBundled {
+                            Label("This is the bare executable, not TPHaptics.app. macOS can't grant Accessibility to it. Quit it and open build/TPHaptics.app (or run ./run.sh).",
+                                  systemImage: "exclamationmark.octagon.fill")
+                                .font(.callout).foregroundStyle(.red)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Text("Running: \(RunInfo.summary)")
+                            .font(.system(.caption, design: .monospaced)).foregroundStyle(.secondary)
+                            .textSelection(.enabled)
                         if !model.accessibilityTrusted {
                             HStack {
                                 Button("Request Access…") { model.requestAccessibility() }

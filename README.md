@@ -17,9 +17,10 @@ which only works while you're touching the trackpad.
 - **Strength slider** – Off to "Max Power of Actuator"
 - **Notifications** – buzz on banners, with per-app/keyword rules (needs Accessibility permission)
 - **Automations** – charger, low battery, hourly chime, countdown, calendar reminders
-- **Audio to haptics** – microphone beat detection
+- **Audio to haptics** – microphone hit detection across bass, mids and highs, or a loudness-following tap rate
 - **Morse**, **breathing guide**, **games** (Simon, Hot & Cold, Rhythm Echo)
-- **Typing, scroll and screen feel** – taps for keystrokes, scroll notches, grid lines, window and screen edges
+- **Typing & scroll** – taps per key, word or sentence; modifier and Caps Lock clicks; scroll notches (vertical and sideways), direction bumps; pinch, rotate and swipe steps
+- **Feel the screen** – grid lines, window edges, screen edges and corners, display crossings, center lines, a pointer-speed ratchet, click echo, and a different tap for buttons, links, fields and menus under the pointer
 - **Silent Clicking / Force Click** switches for the system trackpad settings
 - **Triggers from anywhere** – `tphaptics://` links and a `tphaptics` shell command
 
@@ -32,9 +33,18 @@ Requires Xcode command line tools (Swift 5.9+), macOS 13+.
 open build/TPHaptics.app
 ```
 
+Use `./run.sh` (build, then relaunch the app) rather than `swift run`: macOS can only grant Accessibility
+to a signed app bundle, never to a loose executable. If the app says Accessibility isn't granted
+even though you enabled it, remove any stale TPHaptics entry in System Settings → Privacy & Security →
+Accessibility (or run `tccutil reset Accessibility com.tphaptics.app`), then press **Request Access…**
+on the Notifications screen. The Notifications screen also shows which copy you're running and how it's signed.
+
 `build.sh` signs with an Apple Development / Developer ID identity if one is in your keychain (set
 `SIGN_IDENTITY` to choose one, or `-` for ad-hoc). A stable signature matters: macOS ties the
 Accessibility permission to the app's signature, and an ad-hoc signature changes on every build.
+
+The app icon is drawn in SwiftUI (`Sources/TPHaptics/AppIcon.swift`); run `./make-icon.sh` after
+changing it to regenerate `Resources/AppIcon.icns`, which `build.sh` bundles.
 
 ## Triggers
 

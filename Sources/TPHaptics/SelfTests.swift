@@ -47,9 +47,11 @@ enum SelfTests {
         let first = c.events.prefix(3).map { String(format: "%.1f", $0.time) }.joined(separator: ", ")
         print("countdown 90 s: \(c.events.count) taps, first at [\(first)] s, length \(c.length)")
 
-        // Audio onset detection on synthetic kicks (8 kicks over 4.5 s, so ~8 expected)
-        let onset = AudioHaptics.selfTest()
-        print("onset detector: \(onset.hits) hits (expect about 8–9)")
+        // Audio: a kick, a mid blip and a treble tick every half second for 4.5 s (~9 of each)
+        let bands = AudioHaptics.selfTestBands()
+        print("audio hits by band: bass=\(bands[.bass] ?? 0) mids=\(bands[.mids] ?? 0) highs=\(bands[.highs] ?? 0) (expect about 8–9 each)")
+        let follow = AudioHaptics.selfTestFollow()
+        print("audio loudness follow: loud 2 s = \(follow.loud) taps, quiet 2 s = \(follow.quiet) taps (expect loud >> quiet)")
 
         // Pattern library round-trip
         MainActor.assumeIsolated {
