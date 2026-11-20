@@ -1,0 +1,63 @@
+name: IPHaptics screenshots
+
+# Runs the app in the iOS Simulator and captures every screen, to check layout without a device.
+# (The Simulator has no Taptic Engine, so this checks looks only, never feel.)
+on:
+  workflow_dispatch:
+
+jobs:
+  screens:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate the Xcode project
+        working-directory: IPHaptics
+        run: xcodegen generate
+
+      - name: Build for the Simulator
+        working-directory: IPHaptics
+        run: |
+          set -o pipefail
+          xcodebuild -project IPHaptics.xcodeproj -scheme IPHaptics -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tail -n 30
+
+      - name: Boot an iPhone simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)['devices']
+          names = [(x['name'], x['udid']) for k, v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')]
+          pick = [u for n, u in names if n == 'iPhone 16'] or [u for n, u in names]
+          print(pick[0])
+          ")
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Capture screens
+        working-directory: IPHaptics
+        run: |
+          APP=build/Build/Products/Debug-iphonesimulator/IPHaptics.app
+          xcrun simctl install "$UDID" "$APP"
+          mkdir -p shots
+          for s in home patterns sequencer paint buzz pad breathe morse audio simon hotcold rhythm; do
+            xcrun simctl terminate "$UDID" io.github.jgm240.IPHaptics 2>/dev/null || true
+            if [ "$s" = home ]; then
+              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics
+            else
+              xcrun simctl launch "$UDID" io.github.jgm240.IPHaptics -startScreen "$s"
+            fi
+            sleep 4
+            xcrun simctl io "$UDID" screenshot "shots/$s.png"
+          done
+          ls -la shots
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iphaptics-screens
+          path: IPHaptics/shots
