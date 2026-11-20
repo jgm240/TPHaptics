@@ -60,6 +60,25 @@ enum SelfTests {
         ])
         print("banner text: \(cleaned)  (expect app name first, no 'Notification Center')")
 
+        // Paint sequencer: height becomes strength, x becomes time, gaps are silence
+        let ramp = PaintPattern.events(strokes: [[CGPoint(x: 0, y: 0.1), CGPoint(x: 1, y: 1)]], length: 2, interval: 0.05)
+        let rampIDs = ramp.compactMap(\.actuation)
+        let rising = zip(rampIDs, rampIDs.dropFirst()).allSatisfy { $0 <= $1 }
+        print("paint ramp: \(ramp.count) taps, strength \(rampIDs.first ?? 0) → \(rampIDs.last ?? 0), never decreasing = \(rising) (expect 40 taps, 1 → 6, true)")
+        let gap = PaintPattern.events(strokes: [[CGPoint(x: 0.25, y: 0.9), CGPoint(x: 0.5, y: 0.9)]], length: 2, interval: 0.05)
+        print(String(format: "paint gap: %d taps between %.2f s and %.2f s (expect 11 taps: the stroke's end bin counts, 0.50 to 1.00 s)",
+                     gap.count, gap.first?.time ?? -1, gap.last?.time ?? -1))
+        let flat = PaintPattern.events(strokes: [[CGPoint(x: 0, y: 0.04), CGPoint(x: 1, y: 0.04)]], length: 1, interval: 0.05)
+        print("paint silent strip: \(flat.count) taps (expect 0)")
+        let backwards = PaintPattern.events(strokes: [[CGPoint(x: 1, y: 0.9), CGPoint(x: 0, y: 0.9)]], length: 1, interval: 0.1)
+        print("paint right-to-left: \(backwards.count) taps (expect 10)")
+
+        // Tap-to-click detection (synthetic events, not posted): short = tap, long = physical press
+        for ms in [8.0, 25.0, 60.0, 140.0] {
+            print("tap-to-click \(Int(ms)) ms click -> \(InputFeel.shared.selfTestClick(durationMs: ms) ?? "n/a")  (expect tap under the \(Int(UserDefaults.standard.object(forKey: "feel.tapMaxMs") as? Double ?? 35)) ms threshold)")
+            usleep(200_000)
+        }
+
         // Pattern library round-trip
         MainActor.assumeIsolated {
             let lib = PatternLibrary.shared

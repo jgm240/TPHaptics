@@ -10,6 +10,8 @@ final class InputFeel: ObservableObject {
     @Published private(set) var accessibilityOK = AXIsProcessTrusted()
     /// Bumped whenever settings change, so the screens refresh.
     @Published private(set) var revision = 0
+    /// Latest clicks seen by "Click on tap-to-click", newest first, for the live test area.
+    @Published private(set) var tapLog: [String] = []
 
     private let d = UserDefaults.standard
     private var monitors: [Any] = []
@@ -18,6 +20,7 @@ final class InputFeel: ObservableObject {
     private var windowTimer: Timer?
 
     // Keyboard / scroll / gesture state
+    private var downAt: [Int: TimeInterval] = [:]     // button → when it went down
     private var lastFlags: NSEvent.ModifierFlags = []
     private var scrollY: CGFloat = 0
     private var scrollX: CGFloat = 0
@@ -70,7 +73,7 @@ final class InputFeel: ObservableObject {
         let pointerKeys = ["feel.grid", "feel.windows", "feel.edges", "feel.corners", "feel.displays",
                            "feel.center", "feel.speed", "feel.elements"]
         let pointer = pointerKeys.contains(where: on)
-        let clicks = on("feel.clicks")
+        let clicks = on("feel.clicks") || on("feel.tapclick")
         let wins = on("feel.windows")
 
         let sig = [typing, mods, scroll, gestures, pointer, clicks, wins].map { $0 ? "1" : "0" }.joined()
@@ -86,7 +89,9 @@ final class InputFeel: ObservableObject {
         if scroll { observe(.scrollWheel) { [weak self] e in self?.scrolled(e) } }
         if gestures { observe([.magnify, .rotate, .swipe]) { [weak self] e in self?.gesture(e) } }
         if pointer { observe([.mouseMoved, .leftMouseDragged, .rightMouseDragged]) { [weak self] e in self?.moved(e) } }
-        if clicks { observe([.leftMouseDown, .leftMouseUp, .rightMouseDown]) { [weak self] e in self?.clicked(e) } }
+        if clicks {
+            observe([.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp]) { [weak self] e in self?.clicked(e) }
+        }
         if wins {
             refreshWindows()
             windowTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in self?.refreshWindows() }
@@ -168,11 +173,53 @@ final class InputFeel: ObservableObject {
     }
 
     private func clicked(_ e: NSEvent) {
-        switch e.type {
-        case .leftMouseDown: Haptics.tick(5)
-        case .leftMouseUp: Haptics.tick(1)
-        case .rightMouseDown: Haptics.tick(4)
-        default: break
+        // Click echo: a tap on every press and release.
+        if on("feel.clicks") {
+            switch e.type {
+            case .leftMouseDown: Haptics.tick(5)
+            case .leftMouseUp: Haptics.tick(1)
+            case .rightMouseDown: Haptics.tick(4)
+            default: break
+            }
+        }
+        if on("feel.tapclick") { tapToClick(e) }
+    }
+
+    // MARK: Click on tap-to-click
+
+    /// Self-test hook: runs a synthetic click (never posted to the system) through the tap-to-click logic.
+    /// Returns the log line it produced.
+    func selfTestClick(durationMs: Double) -> String? {
+        let t = ProcessInfo.processInfo.systemUptime
+        func event(_ type: NSEvent.EventType, _ time: TimeInterval) -> NSEvent? {
+            NSEvent.mouseEvent(with: type, location: .zero, modifierFlags: [], timestamp: time, windowNumber: 0,
+                               context: nil, eventNumber: 0, clickCount: 1, pressure: 1)
+        }
+        guard let down = event(.leftMouseDown, t), let up = event(.leftMouseUp, t + durationMs / 1000) else { return nil }
+        tapToClick(down)
+        tapToClick(up)
+        return tapLog.first
+    }
+
+    /// Tap-to-click sends a mouse-down and mouse-up almost at once and nothing physically moves, so the
+    /// trackpad gives no click feel. A physical press stays down much longer. Clicks shorter than the
+    /// threshold are treated as taps and get the click they're missing.
+    private func tapToClick(_ e: NSEvent) {
+        let button = (e.type == .rightMouseDown || e.type == .rightMouseUp) ? 1 : 0
+        let isDown = e.type == .leftMouseDown || e.type == .rightMouseDown
+        if isDown { downAt[button] = e.timestamp; return }
+
+        guard let t0 = downAt.removeValue(forKey: button) else { return }
+        let ms = (e.timestamp - t0) * 1000
+        let isTap = ms <= number("feel.tapMaxMs", 35)
+
+        tapLog.insert(String(format: "%@ · %.0f ms%@", isTap ? "tap" : "press", ms, button == 1 ? " · right" : ""), at: 0)
+        if tapLog.count > 6 { tapLog.removeLast() }
+        guard isTap else { return }
+
+        Haptics.tick(button == 1 ? 5 : 6)                                        // the click you'd feel on press
+        if (d.string(forKey: "feel.tapStyle") ?? "press") == "pressRelease" {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) { Haptics.tick(3) }   // and the release
         }
     }
 
@@ -413,6 +460,45 @@ struct FeelView: View {
         }
     }
 
+    // MARK: Tap-to-click controls
+
+    private var tapStyle: Binding<String> {
+        Binding(get: { UserDefaults.standard.string(forKey: "feel.tapStyle") ?? "press" },
+                set: { UserDefaults.standard.set($0, forKey: "feel.tapStyle") })
+    }
+
+    @ViewBuilder private var tapToClickControls: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if !TrackpadSettings.tapToClick {
+                Pill(text: "Tap to Click is off in System Settings → Trackpad", tint: .orange)
+            }
+            Picker("Feel", selection: tapStyle) {
+                Text("Click on tap").tag("press")
+                Text("Click + release").tag("pressRelease")
+            }
+            .pickerStyle(.segmented).frame(maxWidth: 360)
+
+            slider("feel.tapMaxMs", 35, 10...120, step: 5, label: "Tap if under", unit: "ms")
+            Hint("A tap lasts a few milliseconds; a real press lasts longer. If your taps feel nothing, raise this. If real clicks get an extra tap, lower it.")
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Try it: tap and click anywhere").font(.subheadline.weight(.semibold))
+                if feel.tapLog.isEmpty {
+                    Text("Nothing yet").font(.callout).foregroundStyle(.secondary)
+                }
+                ForEach(Array(feel.tapLog.enumerated()), id: \.offset) { i, line in
+                    Text(line)
+                        .font(.system(.callout, design: .monospaced))
+                        .foregroundStyle(line.hasPrefix("tap") ? Color.green : .secondary)
+                        .opacity(1 - Double(i) * 0.13)
+                }
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Color.primary.opacity(0.05)))
+        }
+    }
+
     // MARK: Screen
 
     @ViewBuilder private var screenScreens: some View {
@@ -442,6 +528,12 @@ struct FeelView: View {
                 }
                 Divider()
                 ModeRow(title: "Click echo", subtitle: "A firm tap when you press and a light one when you release, anywhere on screen.", key: "feel.clicks")
+                Divider()
+                ModeRow(title: "Click on tap-to-click",
+                        subtitle: "Tapping to click gives no feedback because nothing moves. This adds the click you'd feel from pressing, whenever a click comes from a tap.",
+                        key: "feel.tapclick") {
+                    tapToClickControls
+                }
                 Divider()
                 ModeRow(title: "Buttons and fields", subtitle: "Feel what's under the pointer: firm for buttons and links, soft for text fields, medium for menus.",
                         key: "feel.elements", needsAccessibility: true)

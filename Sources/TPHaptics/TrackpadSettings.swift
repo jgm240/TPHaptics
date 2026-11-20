@@ -22,6 +22,14 @@ enum TrackpadSettings {
         TrackpadActuator.shared.recacheProperties()
     }
 
+    // MARK: Tap to Click (read only)
+
+    /// Whether System Settings has Tap to Click on for the built-in trackpad.
+    static var tapToClick: Bool {
+        let v = CFPreferencesCopyAppValue("Clicking" as CFString, trackpadDomain)
+        return (v as? NSNumber)?.boolValue ?? false
+    }
+
     // MARK: Force Click & haptic feedback
 
     /// Persists the Force Click preference. The live switch is on `TrackpadActuator`.

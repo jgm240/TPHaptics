@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Sections
 
 enum AppSection: String, CaseIterable, Identifiable {
-    case patterns, sequencer, editor, buzz
+    case patterns, sequencer, paint, editor, buzz
     case notifications, automations, audio
     case morse, breathe, games
     case typing, screen
@@ -15,6 +15,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .patterns: return "Patterns"
         case .sequencer: return "Sequencer"
+        case .paint: return "Paint"
         case .editor: return "Pattern Editor"
         case .buzz: return "Buzz"
         case .notifications: return "Notifications"
@@ -34,6 +35,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .patterns: return "Ready-made patterns. Press play and feel them."
         case .sequencer: return "A 16-step grid. Click steps to build a rhythm."
+        case .paint: return "Paint a line: left to right is time, height is strength."
         case .editor: return "Draw your own pattern on a timeline and save it."
         case .buzz: return "A steady train of taps with an interval you choose."
         case .notifications: return "Buzz when a notification arrives, with rules per app."
@@ -53,6 +55,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .patterns: return "list.bullet"
         case .sequencer: return "square.grid.4x3.fill"
+        case .paint: return "paintbrush.pointed.fill"
         case .editor: return "scribble.variable"
         case .buzz: return "waveform"
         case .notifications: return "bell.badge.fill"
@@ -72,6 +75,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .patterns: return .blue
         case .sequencer: return .indigo
+        case .paint: return .orange
         case .editor: return .purple
         case .buzz: return .teal
         case .notifications: return .orange
@@ -88,7 +92,7 @@ enum AppSection: String, CaseIterable, Identifiable {
     }
 
     static let groups: [(name: String, items: [AppSection])] = [
-        ("Play", [.patterns, .sequencer, .editor, .buzz]),
+        ("Play", [.patterns, .sequencer, .paint, .editor, .buzz]),
         ("Triggers", [.notifications, .automations, .audio]),
         ("Fun", [.morse, .breathe, .games]),
         ("Feel", [.typing, .screen]),
@@ -158,7 +162,7 @@ struct ContentView: View {
                 Button { player.stop() } label: { Label("Stop", systemImage: "stop.fill") }
                     .keyboardShortcut(.escape, modifiers: [])
             }
-            if [.patterns, .sequencer, .editor, .morse].contains(section) {
+            if [.patterns, .sequencer, .paint, .editor, .morse].contains(section) {
                 Toggle("Loop", isOn: $loop).toggleStyle(.switch).controlSize(.small)
             }
         }
@@ -177,6 +181,7 @@ struct SectionBody: View {
         switch section {
         case .patterns: PatternsView(loop: $loop)
         case .sequencer: SequencerView(loop: $loop)
+        case .paint: PaintView(loop: $loop)
         case .editor: PatternEditorView(loop: $loop)
         case .buzz: BuzzView()
         case .notifications: NotificationsView()
