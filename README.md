@@ -58,6 +58,17 @@ The **Shortcuts & CLI** screen installs a `tphaptics` command that wraps these, 
 - `MTActuatorSetSystemActuationsEnabled` (disabling the trackpad's own click haptic) is refused with
   `kIOReturnNotPermitted`, even as root, so there is no "disable click haptics" switch.
 
+## Disclaimer
+
+TPHaptics is an independent project and is not affiliated with or endorsed by Apple. It contains no Apple
+code. It calls undocumented functions that already exist on your Mac, found by listing the framework's
+exported symbol names and probing them; nothing is copied, decrypted or bypassed. Apple's own guidance is
+that private APIs are unsupported and can change at any time, so use it at your own risk.
+
+## License
+
+[MIT](LICENSE)
+
 ## Self-tests
 
 ```sh
