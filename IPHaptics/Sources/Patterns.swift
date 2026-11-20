@@ -165,6 +165,9 @@ final class PatternLibrary: ObservableObject {
         if let data = try? JSONEncoder().encode(patterns) { UserDefaults.standard.set(data, forKey: key) }
     }
 
+    /// Built-in and saved pattern names, for pick-lists.
+    var allNames: [String] { Presets.all.map(\.name) + patterns.map(\.name) }
+
     func pattern(named name: String) -> HapticPattern? {
         (Presets.all + patterns).first { $0.name.caseInsensitiveCompare(name) == .orderedSame }
     }

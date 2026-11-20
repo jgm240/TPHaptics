@@ -31,6 +31,20 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             build 2>&1 | tee build.log | tail -n 80
 
+      - name: List the Shortcuts actions found in the build
+        continue-on-error: true
+        working-directory: IPHaptics
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          files = glob.glob("build/Build/Products/Release-iphoneos/IPHaptics.app/**/extract.actionsdata", recursive=True)
+          print("actions data files:", files)
+          d = json.load(open(files[0]))
+          for key in ("actions", "entities", "enums", "queries"):
+              v = d.get(key)
+              print(key + ":", sorted(v.keys()) if isinstance(v, dict) else v)
+          PY
+
       - name: Package the IPA
         working-directory: IPHaptics
         run: |

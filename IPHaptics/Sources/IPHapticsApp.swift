@@ -38,7 +38,18 @@ enum URLRouter {
         case "stop":
             haptics.stop()
         case "open":
-            break                      // just brings the app to the front (used by the website's "Open app")
+            // iphaptics://open brings the app forward; ?screen=pad (or paint, patterns, …) lands on that screen.
+            if let s = q["screen"].flatMap({ AppScreen(rawValue: $0.lowercased()) }) { Navigator.shared.request = s }
+        case "feel":
+            // iphaptics://feel?intensity=70&sharpness=50&seconds=2 vibrates at one point on the Feel Pad.
+            let i = Float(min(100, max(0, Double(q["intensity"] ?? "") ?? 70))) / 100
+            let s = Float(min(100, max(0, Double(q["sharpness"] ?? "") ?? 50))) / 100
+            let seconds = min(30, max(0.1, Double(q["seconds"] ?? "") ?? 1.5))
+            haptics.hum.begin(intensity: i, sharpness: s)
+            Task {
+                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                haptics.hum.end()
+            }
         default:
             break
         }

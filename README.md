@@ -73,6 +73,24 @@ open "tphaptics://buzz?interval=20&duration=2"
 The **Shortcuts & CLI** screen installs a `tphaptics` command that wraps these with no quoting needed, e.g.
 `tphaptics buzz 20 2` or `make && tphaptics play Heartbeat`.
 
+## Shortcuts
+
+TPHaptics ships Shortcuts actions: **Play Pattern**, **Get Patterns** (pick one with "Choose from List" to make your
+own buttons), **Play Morse**, **Buzz**, **Feel Pad Point** (build your own pads from speed and strength), **Set Strength**,
+**Stop Haptics**, **Start Haptic Countdown**, **Open Screen** and **Open Feel Pad**, plus Siri phrases like
+"Play Heartbeat in TPHaptics".
+
+Shortcuts only sees them when the app is built with **Xcode**, because Xcode extracts the metadata the Shortcuts app reads:
+
+```sh
+brew install xcodegen
+./build-xcode.sh        # replaces build/TPHaptics.app with an Xcode build that includes the actions
+```
+
+The plain `./build.sh` build can't expose them, so it has link equivalents for the same jobs (use the "Open URLs" action):
+`tphaptics://open?screen=pad` opens the Feel Pad and `tphaptics://feel?speed=70&strength=90&seconds=2` plays a pad point.
+The *Build TPHaptics with Xcode* workflow also produces a ready-made, ad-hoc-signed copy as a CI artifact.
+
 ## Hardware notes
 
 - Actuation IDs 1–6 click; 7–20 are accepted but silent on the machine this was built on.

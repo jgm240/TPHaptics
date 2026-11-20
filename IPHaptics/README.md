@@ -28,6 +28,16 @@ uses that throughout.
 `iphaptics://play?pattern=Heartbeat&loop=1`, `iphaptics://morse?text=hello`, `iphaptics://stop` and
 `iphaptics://strength?value=0.6` work from Shortcuts ("Open URLs") and other apps.
 
+## Shortcuts and Siri
+
+IPHaptics adds Shortcuts actions: **Play Pattern** (built-in and saved paintings), **Get Patterns** (pick one with
+"Choose from List" to make your own buttons), **Play Morse**, **Buzz**, **Feel Point** (vibrate at a chosen intensity and
+sharpness: build your own Feel Pad from several), **Start Breathing Guide**, **Set Strength**, **Stop Haptics**,
+**Open Screen** and **Open Feel Pad**, plus Siri phrases such as "Play Heartbeat in IPHaptics". Actions that vibrate open
+the app first, because iOS only allows haptics while an app is on screen.
+
+Links work too: `iphaptics://open?screen=pad` and `iphaptics://feel?intensity=70&sharpness=50&seconds=2`.
+
 ## Limits
 
 - **Foreground only.** iOS only lets an app vibrate while it's open on screen, so there's no buzzing in the

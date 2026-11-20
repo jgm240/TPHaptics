@@ -82,6 +82,7 @@ enum AppScreen: String, CaseIterable, Identifiable, Hashable {
 
 struct RootView: View {
     @State private var path: [AppScreen]
+    @ObservedObject private var navigator = Navigator.shared
 
     init() {
         // `-startScreen paint` as a launch argument opens that screen directly (used for screenshots).
@@ -98,6 +99,13 @@ struct RootView: View {
             HomeView()
                 .safeAreaInset(edge: .bottom, spacing: 0) { ControlBar() }
                 .navigationDestination(for: AppScreen.self) { ScreenView(screen: $0) }
+        }
+        // Shortcuts actions and links can ask for a screen, including while the app is still launching.
+        .onChange(of: navigator.request) { request in
+            if let request { path = [request]; navigator.request = nil }
+        }
+        .onAppear {
+            if let request = navigator.request { path = [request]; navigator.request = nil }
         }
     }
 }

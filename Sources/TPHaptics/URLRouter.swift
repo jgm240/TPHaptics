@@ -177,6 +177,14 @@ struct IntegrationsView: View {
     var body: some View {
         Screen {
             Card {
+                VStack(alignment: .leading, spacing: 8) {
+                    CardTitle(title: "Shortcuts actions",
+                              subtitle: "Play Pattern, Get Patterns (pick from a list to build your own buttons), Play Morse, Buzz, Feel Pad Point, Set Strength, Stop Haptics, Start Haptic Countdown, Open Screen and Open Feel Pad.")
+                    Hint("These show up in the Shortcuts app only when TPHaptics is built with Xcode (./build-xcode.sh). With the regular build, use the “Open URLs” action with the links below. They cover the same ground, including opening the Feel Pad.")
+                }
+            }
+
+            Card {
                 VStack(alignment: .leading, spacing: 12) {
                     CardTitle(title: "Command line",
                               subtitle: "Install a tphaptics command so scripts can buzz your trackpad, for example when a build finishes.")
