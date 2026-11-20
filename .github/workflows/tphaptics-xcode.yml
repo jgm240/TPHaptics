@@ -1,0 +1,51 @@
+name: Build TPHaptics with Xcode (Shortcuts actions)
+
+# Builds the Mac app with Xcode and checks the Shortcuts actions were extracted. The result is an
+# ad-hoc-signed copy, handy for trying the actions without installing Xcode yourself.
+on:
+  workflow_dispatch:
+
+jobs:
+  mac:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate the Xcode project
+        working-directory: Mac
+        run: xcodegen generate
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild -project Mac/TPHaptics.xcodeproj -scheme TPHaptics -configuration Release \
+            -derivedDataPath build CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO build 2>&1 | tee build.log | tail -n 40
+
+      - name: Check the Shortcuts actions were extracted
+        run: |
+          APP=build/Build/Products/Release/TPHaptics.app
+          find "$APP" -name "Metadata.appintents" -maxdepth 4
+          python3 - <<'PY'
+          import glob, json
+          files = glob.glob("build/Build/Products/Release/TPHaptics.app/**/extract.actionsdata", recursive=True)
+          print("actions data files:", files)
+          d = json.load(open(files[0]))
+          for key in ("actions", "entities", "enums", "queries"):
+              v = d.get(key)
+              names = sorted(v.keys()) if isinstance(v, dict) else v
+              print(key + ":", names)
+          PY
+
+      - name: Zip the app
+        run: |
+          cd build/Build/Products/Release
+          ditto -c -k --keepParent TPHaptics.app "$GITHUB_WORKSPACE/TPHaptics-xcode-build.zip"
+          ls -la "$GITHUB_WORKSPACE/TPHaptics-xcode-build.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TPHaptics-xcode-build
+          path: TPHaptics-xcode-build.zip

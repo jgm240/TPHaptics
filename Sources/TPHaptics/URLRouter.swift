@@ -62,7 +62,18 @@ enum URLRouter {
             Automations.shared.cancelCountdown()
 
         case "open":
-            NSApp.activate(ignoringOtherApps: true)     // used by the website's "Open app" button
+            // tphaptics://open brings the app forward; ?screen=pad (or paint, patterns, …) lands on that screen.
+            Navigator.shared.reveal(q["screen"].flatMap { AppSection(rawValue: $0.lowercased()) })
+
+        case "feel":
+            // tphaptics://feel?speed=70&strength=90&seconds=2 plays one point on the Feel Pad (0–100 each).
+            let x = min(100, max(0, num("speed", 50))) / 100, y = min(100, max(0, num("strength", 80))) / 100
+            let seconds = min(60, max(0.1, num("seconds", 1.5)))
+            model.player.play(FeelPadMap.pattern(x: x, y: y), loop: true)
+            Task {
+                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                if model.player.playingName == "Feel Pad" { model.player.stop() }
+            }
 
         default:
             Diag.log("url: unknown action \(action)")
@@ -158,6 +169,8 @@ struct IntegrationsView: View {
         ("Breathing guide", "tphaptics://breathe?cycles=4"),
         ("Countdown", "tphaptics://countdown?minutes=5"),
         ("Set strength", "tphaptics://strength?value=0.6"),
+        ("Open the Feel Pad", "tphaptics://open?screen=pad"),
+        ("Play a Feel Pad point", "tphaptics://feel?speed=70&strength=90&seconds=2"),
         ("Stop everything", "tphaptics://stop"),
     ]
 
@@ -212,6 +225,7 @@ struct IntegrationsView: View {
                 }
             }
 
+            Hint("In a terminal, put the link in quotes: open \"tphaptics://buzz?interval=20&duration=2\". Or install the command above and use tphaptics buzz 20 2.")
             Hint("Anything on this Mac that can open a link can trigger these, including web pages that you allow to open TPHaptics. Links can only play haptics; they can't change anything else.")
         }
     }

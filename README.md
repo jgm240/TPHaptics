@@ -64,8 +64,14 @@ tphaptics://strength?value=0.6
 tphaptics://stop
 ```
 
-The **Shortcuts & CLI** screen installs a `tphaptics` command that wraps these, e.g.
-`make && tphaptics play Heartbeat`.
+To try one from the terminal, **quote the link**: zsh treats `?` as a wildcard and `&` as "run in the background".
+
+```sh
+open "tphaptics://buzz?interval=20&duration=2"
+```
+
+The **Shortcuts & CLI** screen installs a `tphaptics` command that wraps these with no quoting needed, e.g.
+`tphaptics buzz 20 2` or `make && tphaptics play Heartbeat`.
 
 ## Hardware notes
 

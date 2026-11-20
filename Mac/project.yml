@@ -1,0 +1,46 @@
+name: TPHaptics
+
+# An Xcode build of the Mac app. The normal ./build.sh (Swift Package Manager) build can't produce the
+# metadata that makes the app's Shortcuts actions appear in the Shortcuts app; Xcode can. Same source files.
+options:
+  bundleIdPrefix: com.tphaptics
+  deploymentTarget:
+    macOS: "13.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  TPHaptics:
+    type: application
+    platform: macOS
+    sources:
+      - path: ../Sources/TPHaptics
+      - path: ../Resources/AppIcon.icns
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tphaptics.app
+        PRODUCT_NAME: TPHaptics
+        ENABLE_HARDENED_RUNTIME: NO
+        COMBINE_HIDPI_IMAGES: YES
+        ENABLE_PREVIEWS: NO
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: TPHaptics
+        CFBundleIconFile: AppIcon
+        LSMinimumSystemVersion: "13.0"
+        NSPrincipalClass: NSApplication
+        NSHighResolutionCapable: true
+        NSUserNotificationAlertStyle: banner
+        NSMicrophoneUsageDescription: TPHaptics listens for beats in the sound around you so it can tap them out on the trackpad. Audio is analysed live and never recorded or stored.
+        NSCalendarsUsageDescription: TPHaptics buzzes your trackpad shortly before calendar events start.
+        NSCalendarsFullAccessUsageDescription: TPHaptics buzzes your trackpad shortly before calendar events start.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tphaptics.app
+            CFBundleURLSchemes:
+              - tphaptics

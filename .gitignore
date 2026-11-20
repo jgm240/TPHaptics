@@ -7,3 +7,5 @@ IPHaptics/IPHaptics.xcodeproj/
 IPHaptics/Info.plist
 IPHaptics/Payload/
 *.ipa
+Mac/TPHaptics.xcodeproj/
+Mac/Info.plist

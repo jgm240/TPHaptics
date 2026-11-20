@@ -108,6 +108,7 @@ enum AppSection: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @ObservedObject private var player = AppModel.shared.player
+    @ObservedObject private var navigator = Navigator.shared
     @State private var section: AppSection = .patterns
     @State private var loop = false
 
@@ -120,6 +121,13 @@ struct ContentView: View {
         }
         .frame(minWidth: 980, minHeight: 700)
         .onChange(of: section) { _ in player.stop() }
+        // Links and Shortcuts actions can ask for a screen, including before the window first appears.
+        .onChange(of: navigator.request) { request in
+            if let request { section = request; navigator.request = nil }
+        }
+        .onAppear {
+            if let request = navigator.request { section = request; navigator.request = nil }
+        }
     }
 
     private var sidebar: some View {
