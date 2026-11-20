@@ -10,6 +10,9 @@ which only works while you're touching the trackpad.
 > any macOS release, and the app can't ship on the App Store. If they're missing it falls back to the
 > public API (finger required). Developed and tested on macOS 26 with a built-in Force Touch trackpad.
 
+> **On iPhone?** See [IPHaptics](IPHaptics/), a port built on Core Haptics (public APIs), with an unsigned IPA on the
+> [Releases](https://github.com/jgm240/TPHaptics/releases) page.
+
 ## What it does
 
 - **Patterns, sequencer, pattern editor** – built-in patterns, a 16-step grid, and a timeline editor with save/import/export

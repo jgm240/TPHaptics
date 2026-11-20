@@ -1,0 +1,39 @@
+name: IPHaptics
+
+options:
+  bundleIdPrefix: io.github.jgm240
+  deploymentTarget:
+    iOS: "16.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+
+targets:
+  IPHaptics:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.jgm240.IPHaptics
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_PREVIEWS: NO
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: IPHaptics
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSMicrophoneUsageDescription: IPHaptics listens to the sound around you so it can vibrate to it. Audio is analysed live and never recorded or stored.
+        ITSAppUsesNonExemptEncryption: false
+        CFBundleURLTypes:
+          - CFBundleURLName: io.github.jgm240.IPHaptics
+            CFBundleURLSchemes:
+              - iphaptics

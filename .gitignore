@@ -3,3 +3,7 @@ build/
 .swiftpm/
 .DS_Store
 *.xcodeproj
+IPHaptics/IPHaptics.xcodeproj/
+IPHaptics/Info.plist
+IPHaptics/Payload/
+*.ipa
