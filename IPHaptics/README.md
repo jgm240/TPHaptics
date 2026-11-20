@@ -7,6 +7,8 @@ Compared with the Mac app, the iPhone's motor is far more capable: instead of si
 it has continuous **intensity** and **sharpness**, and it can run as a true continuous vibration. IPHaptics
 uses that throughout.
 
+**Website:** <https://jgm240.github.io/TPHaptics/#iphone>
+
 ## Screens
 
 - **Patterns**: eleven built-in patterns (taps, heartbeat, a smooth swell, an engine rumble…) plus your own

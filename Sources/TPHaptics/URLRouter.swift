@@ -61,6 +61,9 @@ enum URLRouter {
             model.notifPlayer.stop()
             Automations.shared.cancelCountdown()
 
+        case "open":
+            NSApp.activate(ignoringOtherApps: true)     // used by the website's "Open app" button
+
         default:
             Diag.log("url: unknown action \(action)")
         }
