@@ -79,6 +79,15 @@ enum SelfTests {
             usleep(200_000)
         }
 
+        // Feel Pad: right = faster, up = stronger
+        let slow = FeelPadMap.pattern(x: 0, y: 0), fast = FeelPadMap.pattern(x: 1, y: 1)
+        let mid = FeelPadMap.pattern(x: 0.5, y: 0.5)
+        print(String(format: "feel pad: left %.0f taps/s, middle %.0f, right %.0f (expect 4, ~39, ~167)",
+                     1 / slow.length, 1 / mid.length, 1 / fast.length))
+        print("feel pad: bottom edge = ID \(slow.events[0].actuation ?? 0), top edge = ID \(fast.events[0].actuation ?? 0) (expect 1 and 6)")
+        let ys = stride(from: 0.0, through: 1.0, by: 0.05).map { FeelPadMap.pattern(x: 0.5, y: $0).events[0].actuation ?? 0 }
+        print("feel pad: strength never decreases going up = \(zip(ys, ys.dropFirst()).allSatisfy { $0 <= $1 }) (expect true)")
+
         // Pattern library round-trip
         MainActor.assumeIsolated {
             let lib = PatternLibrary.shared

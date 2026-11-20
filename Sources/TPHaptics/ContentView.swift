@@ -6,7 +6,7 @@ enum AppSection: String, CaseIterable, Identifiable {
     case patterns, sequencer, paint, editor, buzz
     case notifications, automations, audio
     case morse, breathe, games
-    case typing, screen
+    case pad, typing, screen
     case test, integrations
 
     var id: String { rawValue }
@@ -24,6 +24,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .morse: return "Morse"
         case .breathe: return "Breathing"
         case .games: return "Games"
+        case .pad: return "Feel Pad"
         case .typing: return "Typing & Scroll"
         case .screen: return "Feel the Screen"
         case .test: return "Actuation Test"
@@ -44,6 +45,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .morse: return "Send text as dots and dashes you can feel."
         case .breathe: return "A silent guide: swell in, hold, fade out."
         case .games: return "Three games you play by feel."
+        case .pad: return "Slide to shape a buzz: up is stronger, right is faster."
         case .typing: return "A tap for every keystroke and every scroll notch."
         case .screen: return "Feel grid lines, window edges and screen edges."
         case .test: return "Fire one raw actuation ID at a time."
@@ -64,6 +66,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .morse: return "dot.radiowaves.left.and.right"
         case .breathe: return "wind"
         case .games: return "gamecontroller.fill"
+        case .pad: return "hand.point.up.left.fill"
         case .typing: return "keyboard.fill"
         case .screen: return "cursorarrow.motionlines"
         case .test: return "number"
@@ -84,6 +87,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .morse: return .cyan
         case .breathe: return .mint
         case .games: return .purple
+        case .pad: return .pink
         case .typing: return .brown
         case .screen: return .blue
         case .test: return .gray
@@ -95,7 +99,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         ("Play", [.patterns, .sequencer, .paint, .editor, .buzz]),
         ("Triggers", [.notifications, .automations, .audio]),
         ("Fun", [.morse, .breathe, .games]),
-        ("Feel", [.typing, .screen]),
+        ("Feel", [.pad, .typing, .screen]),
         ("Tools", [.test, .integrations]),
     ]
 }
@@ -190,6 +194,7 @@ struct SectionBody: View {
         case .morse: MorseView(loop: $loop)
         case .breathe: BreathingView()
         case .games: GamesView()
+        case .pad: FeelPadView()
         case .typing: FeelView(kind: .typing)
         case .screen: FeelView(kind: .screen)
         case .test: TestView()

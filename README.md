@@ -24,6 +24,7 @@ which only works while you're touching the trackpad.
 - **Automations** – charger, low battery, hourly chime, countdown, calendar reminders
 - **Audio to haptics** – microphone hit detection across bass, mids and highs, or a loudness-following tap rate
 - **Morse**, **breathing guide**, **games** (Simon, Hot & Cold, Rhythm Echo)
+- **Feel Pad** – press and drag on a pad: up is stronger (the six click levels), right is faster (from a slow thump to a continuous buzz)
 - **Typing & scroll** – taps per key, word or sentence; modifier and Caps Lock clicks; scroll notches (vertical and sideways), direction bumps; pinch, rotate and swipe steps
 - **Feel the screen** – grid lines, window edges, screen edges and corners, display crossings, center lines, a pointer-speed ratchet, click echo, and a different tap for buttons, links, fields and menus under the pointer
 - **Silent Clicking / Force Click** switches for the system trackpad settings
